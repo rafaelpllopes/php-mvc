@@ -1,40 +1,33 @@
-<?php 
+<?php
 
-    $dbPath = __DIR__ . '/banco.sqlite';    
-    $pdo = new PDO("sqlite:{$dbPath}");
+$dbPath = __DIR__ . '/banco.sqlite';
+$pdo = new PDO("sqlite:$dbPath");
 
-    $video = [
-        "url" => '',
-        "title" => ''
-    ];
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if ($id === false || $id === null) {
+    header('Location: /?sucesso=0');
+    exit();
+}
 
-    $id = filter_input(INPUT_GET, 'id');
-    $url = filter_input(INPUT_POST, 'url', FILTER_VALIDATE_URL);
-    $title = filter_input(INPUT_POST, 'titulo');
+$url = filter_input(INPUT_POST, 'url', FILTER_VALIDATE_URL);
+if ($url === false) {
+    header('Location: /?sucesso=0');
+    exit();
+}
+$titulo = filter_input(INPUT_POST, 'titulo');
+if ($titulo === false) {
+    header('Location: /?sucesso=0');
+    exit();
+}
 
-    if ($id === false) {
-        header('Location: /index.php?sucesso=0');
-        exit();
-    }
+$sql = 'UPDATE videos SET url = :url, title = :title WHERE id = :id;';
+$statement = $pdo->prepare($sql);
+$statement->bindValue(':url', $url);
+$statement->bindValue(':title', $titulo);
+$statement->bindValue(':id', $id, PDO::PARAM_INT);
 
-    if ($url === false) {
-        header('Location: /index.php?sucesso=0');
-        exit();
-    }
-
-    if ($title === false) {
-        header('Location: /index.php?sucesso=0');
-        exit();
-    }
-
-    $sqlUpdate = 'UPDATE videos SET url = ?, title = ? WHERE id = ?;';
-    $stmt = $pdo->prepare($sqlUpdate);
-    $stmt->bindValue(1, $url);
-    $stmt->bindValue(2, $title);
-    $stmt->bindValue(3, $id);
-    
-    if ($stmt->execute() === false) {
-        header('Location: /index.php:sucesso=0');
-    } else {
-        header('Location: /index.php:sucesso=1');
-    }
+if ($statement->execute() === false) {
+    header('Location: /?sucesso=0');
+} else {
+    header('Location: /?sucesso=1');
+}
