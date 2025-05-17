@@ -1,0 +1,16 @@
+{
+    "name": "rafael/php-mvc",
+    "description": "Projeto para particar o uso de MVC com a linguagem PHP.",
+    "autoload": {
+        "psr-4": {
+            "Rafael\\PhpMvc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "rafaelpllopes",
+            "email": "rafael.pllopes@gmail.com"
+        }
+    ],
+    "require": {}
+}
