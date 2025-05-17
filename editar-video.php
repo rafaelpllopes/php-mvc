@@ -1,5 +1,8 @@
 <?php
 
+use Mvc\Entity\Video;
+use Mvc\Repository\VideoRepository;
+
 $dbPath = __DIR__ . '/banco.sqlite';
 $pdo = new PDO("sqlite:$dbPath");
 
@@ -20,13 +23,10 @@ if ($titulo === false) {
     exit();
 }
 
-$sql = 'UPDATE videos SET url = :url, title = :title WHERE id = :id;';
-$statement = $pdo->prepare($sql);
-$statement->bindValue(':url', $url);
-$statement->bindValue(':title', $titulo);
-$statement->bindValue(':id', $id, PDO::PARAM_INT);
-
-if ($statement->execute() === false) {
+$reporsitory = new VideoRepository($pdo);
+$video = new Video($url, $titulo);
+$video->setId($id);
+if ($reporsitory->update($video) === false) {
     header('Location: /?sucesso=0');
 } else {
     header('Location: /?sucesso=1');
